@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+
+  "name": "BlockMeNot",
+  "description": "Discuss youtube videos which have their comment section disabled",
+  "version": "0.0.0.1",
+  "manifest_version": 2,
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+   "background":{
+     "scripts":["jquery-3.2.1.min.js", "addListeners.js"],
+     "persistent": false
+   },
+   "content_scripts": [
+   {
+     "matches": ["https://www.youtube.com/*"],
+     "js": ["jquery-3.2.1.min.js"]
+   }
+ ],
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "https://www.youtube.com/*",
+    "http://briscola.online/*",
+    "https://briscola.online/*",
+    "http://localhost/*",
+    "https://ajax.googleapis.com/"
+  ]
+}
