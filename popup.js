@@ -2,29 +2,31 @@ console.log("popup loaded")
 document.getElementById("submit_button").onclick = addComment
 
 
-getAllCommentsForVideo(comments => console.log(comments))
+getAllCommentsForVideo()
 function addComment(){
   var sComment = document.getElementById("comment_input_box").value;
   getVideoId( videoId=>{
     uploadComment(videoId, sComment, ()=>{
-      getAllCommentsForVideo(comments => {
-        if(comments)
-        {
-          document.getElementById("comments_area").innerHTML = comments.reduce( (acc, comment) =>{
-            return acc + `<div>${comment}</div>`
-          }, "")
-        }
-      })
+      getAllCommentsForVideo()
     })
   })
 };
-function getAllCommentsForVideo(cb)
+function getAllCommentsForVideo()
 {
   getVideoId( videoId=>{
-    getAllCommentsForVideoId(videoId, response=>{
-      const comments = response.comments
-      cb(comments)
-    })
+    if(videoId != undefined)
+    {
+      getAllCommentsForVideoId(videoId, response=>{
+        const comments = response.comments
+        document.getElementById("comments_area").innerHTML = comments.reduce( (acc, comment) =>{
+          return acc + `<div>${comment}</div>`
+        }, "")
+      })
+    }
+    else
+    {
+      document.getElementById("comments_area").innerHTML = "<div>Navigate to a video to add a comment</div>"
+    }
   })
 }
 function getAllCommentsForVideoId(videoId, cb)
