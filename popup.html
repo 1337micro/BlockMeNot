@@ -12,7 +12,12 @@
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
         font-size: 100%;
       }
-      .comment_box {
+      .comment_input_box {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .comments_area {
         position: relative;
         width: 100%;
         height: 100%;
@@ -30,12 +35,14 @@
   </head>
   <body>
     <div id="status">
-
         <label for="comment_box"> Add a comment: </label>
-        <input id="comment_box" type="text" />
+        <input id="comment_input_box" type="text" />
         <button id="submit_button">Submit</button>
-
     </div>
+    <div>
+      <div id="comments_area"></div>
+    </div>
+
   <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="popup.js"></script>
 

@@ -18,11 +18,3 @@ chrome.runtime.onInstalled.addListener(function() {
     ]);
   });
 });
-
-chrome.pageAction.onClicked.addListener(function(tab) {
-  
-  console.log('Turning ' + tab.url + ' red!');
-  chrome.tabs.executeScript({
-    code: 'document.body.style.backgroundColor="red"'
-  });
-});
