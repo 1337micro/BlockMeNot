@@ -2,16 +2,16 @@ console.log("popup loaded")
 document.getElementById("submit_button").onclick = addComment
 
 
-getAllCommentsForVideo()
+requestAllCommentsForVideo()
 function addComment(){
   var sComment = document.getElementById("comment_input_box").value;
   getVideoId( videoId=>{
-    uploadComment(videoId, sComment, ()=>{
-      getAllCommentsForVideo()
+    requestUploadComment(videoId, sComment, ()=>{
+      requestAllCommentsForVideo()
     })
   })
 };
-function getAllCommentsForVideo()
+function requestAllCommentsForVideo()
 {
   getVideoId( videoId=>{
     if(videoId != undefined)
@@ -48,7 +48,7 @@ function getAllCommentsForVideoId(videoId, cb)
   }
   xhr.send();
 }
-function uploadComment(videoId, comment, cb)
+function requestUploadComment(videoId, comment, cb)
 {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "http://localhost:3001/addComment/"+videoId, true);

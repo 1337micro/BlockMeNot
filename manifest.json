@@ -6,24 +6,27 @@
 
   "page_action": {
     "default_icon": "icon.png",
-    "default_title" : "Youtube tab is selected",
-    "default_popup": "popup.html"
+    "default_title" : "Youtube tab is selected"
   },
    "background":{
-     "scripts":["jquery-3.2.1.min.js", "addListeners.js"],
+     "scripts":["addListeners.js"],
      "persistent": false
    },
    "content_scripts": [
    {
-     "matches": ["https://www.youtube.com/*"],
-     "js": ["jquery-3.2.1.min.js"]
+     "matches": ["https://*.youtube.com/*"],
+     "js": ["jquery-3.2.1.min.js", "embedCommentsIntoYoutube.js"]
    }
  ],
   "permissions": [
     "declarativeContent",
     "storage",
     "tabs",
+    "activeTab",
     "https://www.youtube.com/*",
+    "https://*.youtube.com/*",
+    "http://www.youtube.com/*",
+    "http://*.youtube.com/*",
     "http://briscola.online/*",
     "https://briscola.online/*",
     "http://localhost/*",
