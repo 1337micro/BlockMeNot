@@ -5,7 +5,7 @@ chrome.runtime.sendMessage({directive: "GET_VIDEO_ID"}, function(response) {
     console.log("Recieved video id: " , response.videoId);
     if(response.videoId)
     {
-      videoId = response.videoId    
+      videoId = response.videoId
       intervalToFindComments = setInterval(attemptToFindCommentSection, 5000);
 
     }
@@ -19,11 +19,21 @@ function onCommentSectionFound(comment_section_container)
       if(response && response.comments && response.comments.forEach)
       {
         response.comments.forEach( (comment)=> {
-          comment_section_container.insertAdjacentHTML('afterend', `<h3>${comment}</h3>`)//todo security
+          if(typeof comment === "string")
+          {
+            comment_section_container.insertAdjacentHTML('afterend', `<div>Guest:</div><h3>${comment}</h3>`)//todo security
+          }
+          else if (typeof comment === "object")
+          {
+            let channelName = comment.channel
+            let commentString = comment.comment
+            comment_section_container.insertAdjacentHTML('afterend', `<div>${channelName}:</div><h3>${commentString}</h3>`)//todo security
+          }
+          
         })
       }
       comment_section_container.insertAdjacentHTML('afterend', `
-      <h1>Comment Section Enabled by BlockMeNot</h1>    
+        <h1>Comment Section Enabled by BlockMeNot</h1>    
         <label for="comment_box"> Add a comment: </label>
         <input id="comment_input_box" type="text" />
         <button type="button" id="submit_button">Submit</button>
@@ -32,13 +42,29 @@ function onCommentSectionFound(comment_section_container)
     })
   }  
 }
+function getChannelName()
+{
+  const videoOwnerElement = document.querySelector("ytd-video-owner-renderer")
+  const channelNameContainerElement = videoOwnerElement.querySelector("yt-formatted-string")
+  const channelNameLinkElement = channelNameContainerElement.querySelector("a")
+  return channelNameLinkElement.innerHTML    
+}
 function addSubmitButtonListener()
 {
   document.getElementById("submit_button").onclick  = addComment
 }
 function addComment(){
+  let channelName = "Guest";
+  try
+  {
+    channelName = getChannelName()
+  } catch(failedToGetChannelNameError)
+  {
+    console.error("Failed to get channel name, defaulting to 'Guest'", failedToGetChannelNameError)
+  }
+
   var sComment = document.getElementById("comment_input_box").value;
-  chrome.runtime.sendMessage({directive: "REQUEST_UPLOAD_COMMENT", comment:sComment}, function(response) {
+  chrome.runtime.sendMessage({directive: "REQUEST_UPLOAD_COMMENT", channel:channelName, comment:sComment}, function(response) {
     console.log("Sent comment ", sComment, response)
   })
 };

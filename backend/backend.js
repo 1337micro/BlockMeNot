@@ -26,7 +26,8 @@ app.post('/addComment/:videoId', async (req, res) => {
     if(req.body && videoId)
     {
         const comment = req.body.comment;
-        let response = await database.addCommentToVideoId(videoId, comment)
+        const channel = req.body.channel;
+        let response = await database.addCommentToVideoId(videoId, comment, channel)
         res.status(200).send(response);
     }
     else

@@ -41,7 +41,7 @@ chrome.runtime.onMessage.addListener(
     else if(request.directive === "REQUEST_UPLOAD_COMMENT")
     {
       getVideoId(videoId=>{
-        uploadComment(videoId, request.comment, (response)=>{
+        uploadComment(videoId, request, (response)=>{
           sendResponse(response)
         })
       })

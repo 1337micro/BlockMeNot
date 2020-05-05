@@ -21,13 +21,13 @@ function getCommentsByVideoId(videoId)
             console.error(reason)
         })
 }
-function addCommentToVideoId(videoId, comment)
+function addCommentToVideoId(videoId, comment, channel)
 {
     
     return client
         .then(client => {
             const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
-            return collection.updateOne({videoId: videoId}, {$push:{comments:comment}}, {upsert:true})
+            return collection.updateOne({videoId: videoId}, {$push:{comments:{comment:comment, channel:channel}}}, {upsert:true})
         })
         .catch(reason => {
             console.error(reason)
