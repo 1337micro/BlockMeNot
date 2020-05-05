@@ -21,17 +21,42 @@ function getCommentsByVideoId(videoId)
             console.error(reason)
         })
 }
-function addCommentToVideoId(videoId, comment, channel)
+function addCommentToVideoId(videoId, oComment, channel)
 {
-    
-    return client
-        .then(client => {
-            const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
-            return collection.updateOne({videoId: videoId}, {$push:{comments:{comment:comment, channel:channel}}}, {upsert:true})
-        })
-        .catch(reason => {
-            console.error(reason)
-        })
+    let comment = sanitize(oComment)
+    if(_validateComment(comment))
+    {
+        return client
+            .then(client => {
+                const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
+                return collection.updateOne({videoId: videoId}, {$push:{comments:{comment:comment.comment, channel:comment.channel}}}, {upsert:true})
+            })
+            .catch(reason => {
+                console.error(reason)
+            })
+    }
 }
+function _validateComment(comment)
+{
+    if(typeof comment != undefined && typeof comment.comment === "string")
+    {
+        if(comment.comment.length <= 30000)
+        {
+            return true
+        }
+    }
+}
+function sanitize(v) {
+    if (v instanceof Object) {
+      for (var key in v) {
+        if (/^\$/.test(key)) {
+          delete v[key];
+        } else {
+          sanitize(v[key]);
+        }
+      }
+    }
+    return v;
+  };
 module.exports.getCommentsByVideoId = getCommentsByVideoId;
 module.exports.addCommentToVideoId = addCommentToVideoId;
