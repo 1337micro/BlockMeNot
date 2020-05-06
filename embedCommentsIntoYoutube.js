@@ -1,4 +1,25 @@
 console.log("Fired embedCommentsIntoYoutube.js")
+insertCSS(`
+  .commenterName {
+    font-weight: 500;
+    font-size: 18px;
+    font-family: Roboto, Arial, sans-serif;
+  }
+  .commentText {
+    color: #030303;
+    font-size: 14px;
+    font-family: Roboto, Arial, sans-serif;
+  }
+  .commentBox{
+    position: relative;
+    width: 100%;
+    min-width: 250px;
+    min-height: 65px;
+  }
+  .commentSectionHeader{
+    margin-bottom: 20px;
+  }
+`)
 let intervalToFindComments;
 let videoId;
 chrome.runtime.sendMessage({directive: "GET_VIDEO_ID"}, function(response) {
@@ -7,7 +28,6 @@ chrome.runtime.sendMessage({directive: "GET_VIDEO_ID"}, function(response) {
     {
       videoId = response.videoId
       intervalToFindComments = setInterval(attemptToFindCommentSection, 5000);
-
     }
 });
 function onCommentSectionFound(comment_section_container)
@@ -16,28 +36,43 @@ function onCommentSectionFound(comment_section_container)
   {
     chrome.runtime.sendMessage({directive: "REQUEST_VIDEO_COMMENTS"}, function(response) {
       console.log("Recieved comments " , response);
+
+      comment_section_container.innerHTML = "<span></span>"//reset contents
+
       if(response && response.comments && response.comments.forEach)
       {
         response.comments.forEach( (comment)=> {
           if(typeof comment === "string")
           {
-            comment_section_container.insertAdjacentHTML('afterend', `<div>Guest:</div><h3>${comment}</h3>`)//todo security
+            comment_section_container.insertAdjacentHTML('afterbegin', `<div class="commenterName">Guest</div>
+            <div class="commentText">${comment}</div>`)
           }
           else if (typeof comment === "object")
           {
             let channelName = comment.channel
             let commentString = comment.comment
-            comment_section_container.insertAdjacentHTML('afterend', `<div>${channelName}:</div><h3>${commentString}</h3>`)//todo security
+            let commentDate = comment.date
+            if(commentDate)
+            {
+              commentDate = new Date(commentDate)
+            }
+            comment_section_container.insertAdjacentHTML('afterbegin', `<div><span class="commenterName">${channelName}</span>
+              <span class="commentText">${commentDate != undefined ? commentDate.toString() : ""}</span></div>
+              <div class="commentText">${commentString}</div>`)
           }
           
         })
+        comment_section_container.insertAdjacentHTML('afterbegin', `
+        <div class="commentSectionHeader">
+          <div class="commenterName">Comment Section Enabled by BlockMeNot</div>
+          <textarea id="comment_input_box" type="text" class="commentBox" placeholder="Add a public comment..."></textarea>
+          <div>
+            <button type="button" id="submit_button">Submit</button>
+          </div>
+        </div>
+        `)
+  
       }
-      comment_section_container.insertAdjacentHTML('afterend', `
-        <h1>Comment Section Enabled by BlockMeNot</h1>    
-        <label for="comment_box"> Add a comment: </label>
-        <input id="comment_input_box" type="text" />
-        <button type="button" id="submit_button">Submit</button>
-      `)
       addSubmitButtonListener()
     })
   }  
@@ -53,6 +88,10 @@ function addSubmitButtonListener()
 {
   document.getElementById("submit_button").onclick  = addComment
 }
+function clearCommentBox()
+{
+  document.getElementById("comment_input_box").innerHTML = ""
+}
 function addComment(){
   let channelName = "Guest";
   try
@@ -66,6 +105,8 @@ function addComment(){
   var sComment = document.getElementById("comment_input_box").value;
   chrome.runtime.sendMessage({directive: "REQUEST_UPLOAD_COMMENT", channel:channelName, comment:sComment}, function(response) {
     console.log("Sent comment ", sComment, response)
+    clearCommentBox()
+    attemptToFindCommentSection()
   })
 };
 function attemptToFindCommentSection()
@@ -105,6 +146,27 @@ function attemptToFindCommentSection()
           }
         }
     }
+}
+
+function insertCSS(css)
+{
+  if(document.head)
+  {
+    const style = document.createElement('style');
+    document.head.appendChild(style)
+
+    style.type = 'text/css';
+    style.appendChild(document.createTextNode(css));
+  }
+}
+function insertScript(src)
+{
+  if(document.head)
+  {
+    const scriptElement = document.createElement('script');
+    scriptElement.setAttribute("src", src)
+    document.head.appendChild(scriptElement)    
+  }
 }
 
 

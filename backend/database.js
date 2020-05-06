@@ -29,7 +29,12 @@ function addCommentToVideoId(videoId, oComment, channel)
         return client
             .then(client => {
                 const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
-                return collection.updateOne({videoId: videoId}, {$push:{comments:{comment:comment.comment, channel:comment.channel}}}, {upsert:true})
+                return collection.updateOne({videoId: videoId}, {$push:{
+                    comments:{
+                        comment:comment.comment, 
+                        channel:comment.channel,
+                        date: Date.now()
+                    }}}, {upsert:true})
             })
             .catch(reason => {
                 console.error(reason)
@@ -40,7 +45,7 @@ function _validateComment(comment)
 {
     if(typeof comment != undefined && typeof comment.comment === "string")
     {
-        if(comment.comment.length <= 30000)
+        if(comment.comment.length <= 30000 && comment.comment.trim().length >= 2)
         {
             return true
         }

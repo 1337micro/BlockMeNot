@@ -15,7 +15,7 @@
    "content_scripts": [
    {
      "matches": ["https://*.youtube.com/*"],
-     "js": ["jquery-3.2.1.min.js", "embedCommentsIntoYoutube.js"]
+     "js": ["embedCommentsIntoYoutube.js"]
    }
  ],
   "permissions": [
@@ -27,6 +27,10 @@
     "https://*.youtube.com/*",
     "http://www.youtube.com/*",
     "http://*.youtube.com/*",
+    "https://www.google.com/*",
+    "https://*.google.com/*",
+    "http://www.google.com/*",
+    "http://*.google.com/*",
     "http://briscola.online/*",
     "https://briscola.online/*",
     "http://localhost/*",
