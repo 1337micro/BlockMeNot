@@ -35,7 +35,7 @@ function onCommentSectionFound(comment_section_container)
   if(videoId)
   {
     chrome.runtime.sendMessage({directive: "REQUEST_VIDEO_COMMENTS"}, function(response) {
-      console.log("Recieved comments " , response);
+      console.log("Recieved comments ", response);
 
       comment_section_container.innerHTML = "<span></span>"//reset contents
 

@@ -13,13 +13,13 @@ function getCommentsByVideoId(videoId)
 {
     
     return client
-        .then(client => {
-            const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
-            return collection.findOne({videoId: videoId})
-        })
-        .catch(reason => {
-            console.error(reason)
-        })
+    .then(client => {
+        const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
+        return collection.findOne({videoId: videoId})
+    })
+    .catch(reason => {
+        console.error(reason)
+    })
 }
 function addCommentToVideoId(videoId, oComment, channel)
 {
@@ -27,18 +27,21 @@ function addCommentToVideoId(videoId, oComment, channel)
     if(_validateComment(comment))
     {
         return client
-            .then(client => {
-                const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
-                return collection.updateOne({videoId: videoId}, {$push:{
+        .then(client => {
+            const collection = client.db(process.env.DB_DATABASE_NAME).collection(process.env.DB_COMMENTS_COLLECTION_NAME)
+            return collection.updateOne({videoId: videoId}, {
+                $push:{
                     comments:{
                         comment:comment.comment, 
                         channel:comment.channel,
                         date: Date.now()
-                    }}}, {upsert:true})
-            })
-            .catch(reason => {
-                console.error(reason)
-            })
+                    }
+                }
+            }, {upsert:true})
+        })
+        .catch(reason => {
+            console.error(reason)
+        })
     }
 }
 function _validateComment(comment)
@@ -53,15 +56,15 @@ function _validateComment(comment)
 }
 function sanitize(v) {
     if (v instanceof Object) {
-      for (var key in v) {
-        if (/^\$/.test(key)) {
-          delete v[key];
-        } else {
-          sanitize(v[key]);
+        for (var key in v) {
+            if (/^\$/.test(key)) {
+                delete v[key];
+            } else {
+                sanitize(v[key]);
+            }
         }
-      }
     }
     return v;
-  };
+};
 module.exports.getCommentsByVideoId = getCommentsByVideoId;
 module.exports.addCommentToVideoId = addCommentToVideoId;
